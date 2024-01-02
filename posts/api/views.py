@@ -4,8 +4,10 @@ from rest_framework.decorators import action
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+
 from posts.models import Comment, Post
 from posts.api.serializers import PostSerializer, PostUpdateSerializer
+from posts.api.pagination import CustomizedPostPagination
 
 
 """
@@ -39,6 +41,7 @@ Replaced with viewset
 class PostViewSet(ModelViewSet):
     serializer_class = PostSerializer
     lookup_field = "slug"
+    pagination_class = CustomizedPostPagination
     # authentication_classes = ()
     # permission_classes = ()
 
