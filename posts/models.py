@@ -26,14 +26,6 @@ class Post(models.Model):
     @property
     def total_likes(self):
         return self.likes.count()
-    
-    def like(self, user):
-        if user not in self.likes:
-            self.likes.add(user)
-    
-    def dislike(self, user):
-        if user in self.likes:
-            self.likes.remove(user)
 
 
 class Comment(models.Model):
