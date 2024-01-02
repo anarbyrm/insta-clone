@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from posts.models import Comment, Post
-from posts.api.serializers import PostSerializer, PostUpdateSerializer, PostCommentCreateSerializer
+from posts.api.serializers import PostSerializer, PostUpdateSerializer, PostCommentSerializer
 from posts.api.pagination import CustomizedPostPagination
 
 
@@ -55,7 +55,7 @@ class PostViewSet(ModelViewSet):
         if self.action in ("update", "partial_update"):
             return PostUpdateSerializer
         elif self.action == "comments":
-            return PostCommentCreateSerializer
+            return PostCommentSerializer
         return self.serializer_class
 
     def perform_create(self, serializer):
@@ -110,3 +110,8 @@ class PostViewSet(ModelViewSet):
                 "comments": serializer.data
             }
             return Response(data, status=status.HTTP_200_OK)
+
+
+class CommentDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = PostCommentSerializer
