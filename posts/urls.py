@@ -8,5 +8,5 @@ router.register(r'posts', views.PostViewSet, basename='posts')
 post_urls = router.urls
 
 urlpatterns = post_urls + [
-    
-] 
+    path("comments/<int:pk>", views.CommentDetailView.as_view(), name="comment-detail"),
+]
