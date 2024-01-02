@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from posts.models import Comment, Post
-from posts.api.serializers import PostSerializer, PostUpdateSerializer
+from posts.api.serializers import PostSerializer, PostUpdateSerializer, PostCommentCreateSerializer
 from posts.api.pagination import CustomizedPostPagination
 
 
@@ -54,10 +54,16 @@ class PostViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.action in ("update", "partial_update"):
             return PostUpdateSerializer
+        elif self.action == "comments":
+            return PostCommentCreateSerializer
         return self.serializer_class
-    
+
     def perform_create(self, serializer):
-        return serializer.save(user=self.request.user)
+        current_user = self.request.user
+        if self.action == "comments":
+            post = self.get_object()
+            return serializer.save(user=current_user, post=post)
+        return serializer.save(user=current_user)
 
     @action(detail=True, url_path="like", methods=["POST"])
     def like(self, request, slug):
@@ -81,3 +87,26 @@ class PostViewSet(ModelViewSet):
         return Response({"message": "You already unliked the post: %s" % post.slug},
                         status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=True, url_path="comments", methods=["GET", "POST"])
+    def comments(self, request, slug):
+        post = self.get_object()
+        serializer_class = self.get_serializer_class()
+
+        if self.request.method == "POST":
+            serializer = serializer_class(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+
+            data = {
+                "data": serializer.data,
+                "message": "Comment added to the post %s" % post.slug
+            }
+            return Response(data, status=status.HTTP_201_CREATED)
+        else:
+            post_comments = post.comments.all()
+            serializer = serializer_class(post_comments, many=True)
+            data = {
+                "post": post.slug,
+                "comments": serializer.data
+            }
+            return Response(data, status=status.HTTP_200_OK)

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from posts.models import Comment, Post
 
+
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
@@ -30,4 +31,22 @@ class PostUpdateSerializer(serializers.ModelSerializer):
         fields = (
             "description",
             "slug",
+        )
+
+
+class PostCommentCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = (
+            "user",
+            "post",
+            "text",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = (
+            "user",
+            "post",
+            "created_at",
+            "updated_at",
         )
