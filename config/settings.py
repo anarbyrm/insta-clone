@@ -55,12 +55,19 @@ PROJECT_APPS = [
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    )
+    ),
 }
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=5)
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),
+}
+
+
+DJOSER = {
+    "SERIALIZERS": {
+        "user_create": "accounts.api.serializers.CustomUserCreateSerializer",
+    },
 }
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + PROJECT_APPS

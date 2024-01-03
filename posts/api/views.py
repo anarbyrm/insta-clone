@@ -9,7 +9,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from posts.models import Comment, Post
 from posts.api.serializers import PostSerializer, PostUpdateSerializer, PostCommentSerializer
-from posts.api.pagination import CustomizedPostPagination
+from posts.api.paginations import CustomizedPostPagination
 
 
 """

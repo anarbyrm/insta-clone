@@ -21,7 +21,8 @@ API_VERSION = "v1"
 
 urlpatterns_by_version = [
     path(f"api/{API_VERSION}/", include([
-        path('', include("posts.urls")),
+        path("", include("posts.urls")),
+        path("", include("accounts.urls")),
     ]))
 ]
 
@@ -33,5 +34,5 @@ auth_urls = [
 ]
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
 ] + urlpatterns_by_version + auth_urls
