@@ -32,6 +32,10 @@ class Profile(models.Model):
     def total_friends(self):
         return self.friends.count()
 
+    @property
+    def username(self):
+        return self.user.username
+
 
 class FriendshipResponseType(models.TextChoices):
     NONE = "NONE", "None"

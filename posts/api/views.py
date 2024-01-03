@@ -10,7 +10,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from posts.models import Comment, Post
 from posts.api.serializers import PostSerializer, PostUpdateSerializer, PostCommentSerializer
 from posts.api.paginations import CustomizedPostPagination
-from posts.api.permissions import IsOwner
+from config.permissions import IsOwner
 
 
 class PostViewSet(ModelViewSet):
