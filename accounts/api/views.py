@@ -18,7 +18,6 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
 
         if username:
             profile = get_object_or_404(Profile, user__username=username)
-            print(profile)
             self.check_object_permissions(self.request, profile)
             return profile
 
