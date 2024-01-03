@@ -16,7 +16,7 @@ class Post(models.Model):
     description = models.CharField(max_length=500, null=True, blank=True)
     slug = models.SlugField(max_length=100, unique=True)
     likes = models.ManyToManyField(User, blank=True, related_name="post_likes")
-
+    is_public = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

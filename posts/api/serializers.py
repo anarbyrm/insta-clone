@@ -13,6 +13,7 @@ class PostSerializer(serializers.ModelSerializer):
             "description",
             "slug",
             "total_likes",
+            "is_public",
             "created_at",
             "updated_at",
         )
@@ -29,8 +30,24 @@ class PostUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = (
-            "description",
+            "user",
+            "file_type",
+            "file",
             "slug",
+            "likes",
+            "is_public",
+            "created_at",
+            "updated_at",
+            "description",
+        )
+        read_only_fields = (
+            "user",
+            "file_type",
+            "file",
+            "slug",
+            "likes",
+            "created_at",
+            "updated_at",
         )
 
 

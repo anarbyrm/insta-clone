@@ -10,46 +10,23 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from posts.models import Comment, Post
 from posts.api.serializers import PostSerializer, PostUpdateSerializer, PostCommentSerializer
 from posts.api.paginations import CustomizedPostPagination
-
-
-"""
-Replaced with viewset
-"""
-# class PostListView(ListCreateAPIView):
-#     queryset = Post.objects.all()
-#     serializer_class = PostSerializer
-
-#     def get_queryset(self):
-#         queryset = Post.objects\
-#             .select_related("user").all()
-#             #.filter(Q(user=self.request.user)) # TODO: implement seeing only owned and friends posts
-#         return queryset
-    
-#     def perform_create(self, serializer):
-#         return serializer.save(user=self.request.user)
-
-
-# class PostDetailView(RetrieveUpdateDestroyAPIView):
-#     queryset = Post.objects.all()
-#     serializer_class = PostSerializer
-#     lookup_field = "slug"
-
-#     def get_serializer_class(self):
-#         if self.request.method in ("PUT", "PATCH"):
-#             return PostUpdateSerializer
-#         return self.serializer_class
+from posts.api.permissions import IsOwner
 
 
 class PostViewSet(ModelViewSet):
     serializer_class = PostSerializer
     lookup_field = "slug"
     pagination_class = CustomizedPostPagination
-    permission_classes = (IsAuthenticated,)  # TODO: add other permission classes
+    permission_classes = (IsAuthenticated, IsOwner)
 
     def get_queryset(self):
         queryset = Post.objects\
-            .select_related("user").all()
-            #.filter(Q(user=self.request.user)) # TODO: implement seeing only owned and friends posts
+            .select_related("user")\
+            .filter(
+                Q(is_public=True) |
+                Q(user=self.request.user) |
+                Q(user__in=self.request.user.user_profile.friends.all())
+            )
         return queryset
 
     def get_serializer_class(self):
@@ -116,4 +93,4 @@ class PostViewSet(ModelViewSet):
 class CommentDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = PostCommentSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsOwner)
