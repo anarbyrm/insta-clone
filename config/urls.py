@@ -25,6 +25,13 @@ urlpatterns_by_version = [
     ]))
 ]
 
+auth_urls = [
+    path("auth/", include([
+        path("", include("djoser.urls")),
+        path("", include("djoser.urls.jwt")),
+    ]))
+]
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-] + urlpatterns_by_version
+] + urlpatterns_by_version + auth_urls

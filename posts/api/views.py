@@ -3,7 +3,9 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from posts.models import Comment, Post
 from posts.api.serializers import PostSerializer, PostUpdateSerializer, PostCommentSerializer
@@ -42,8 +44,7 @@ class PostViewSet(ModelViewSet):
     serializer_class = PostSerializer
     lookup_field = "slug"
     pagination_class = CustomizedPostPagination
-    # authentication_classes = ()
-    # permission_classes = ()
+    permission_classes = (IsAuthenticated,)  # TODO: add other permission classes
 
     def get_queryset(self):
         queryset = Post.objects\
@@ -115,3 +116,4 @@ class PostViewSet(ModelViewSet):
 class CommentDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = PostCommentSerializer
+    permission_classes = (IsAuthenticated,)
