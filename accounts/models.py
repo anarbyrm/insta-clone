@@ -43,7 +43,7 @@ class FriendshipResponseType(models.TextChoices):
     REJECT = "REJECT", "Reject"
 
 
-class FrendshipRequest(models.Model):
+class FriendshipRequest(models.Model):
     sender = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
