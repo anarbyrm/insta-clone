@@ -11,7 +11,6 @@ from rest_framework.response import Response
 from accounts.api.serializers import FriendRequestSerializer, ProfileSerializer
 from accounts.constants import FRIENDSHIP_DEFAULT_RESPONSE
 from accounts.models import FriendshipRequest, FriendshipResponseType, Profile
-from chat.models import ChatBox
 from config.permissions import IsOwner
 
 User = get_user_model()
@@ -69,8 +68,6 @@ class FriendRequestView(APIView):
 
                 user.user_profile.friends.add(request.user)
                 request.user.user_profile.friends.add(user)
-                # automatically creates chatbox when friend request accepted
-                ChatBox.members.add(request.user, user)
 
                 return Response({"message": "Accepted the request from '%s'" % username},
                             status=status.HTTP_200_OK)
@@ -108,8 +105,6 @@ class FriendRequestResponseView(APIView):
                 serializer.save(updated_fields=["response"])
                 request.user.user_profile.friends.add(friendship_request.sender)
                 friendship_request.sender.user_profile.friends.add(request.user)
-                # automatically creates chatbox when friend request accepted
-                ChatBox.members.add(request.user, friendship_request.sender)
         elif response == FriendshipResponseType.REJECT:
             friendship_request.delete()
 

@@ -4,9 +4,6 @@ from django.db import models
 User = get_user_model()
 
 
-class ChatBox(models.Model):
-    members = models.ManyToManyField(User, max_length=2)
-
 class MessageStatusType(models.TextChoices):
     PENDING = "PENDING", "Pending"
     SENT = "SENT", "Sent"
@@ -15,15 +12,15 @@ class MessageStatusType(models.TextChoices):
 
 
 class Message(models.Model):
-    chat = models.ForeignKey(
-        ChatBox,
-        on_delete=models.CASCADE,
-        related_name="messages"
-    )
     sender = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="messages"
+        related_name="messages_sent"
+    )
+    receiver = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="messages_received"
     )
     text = models.TextField()
     status = models.CharField(
