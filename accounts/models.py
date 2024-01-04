@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 
+from accounts.constants import FRIENDSHIP_DEFAULT_RESPONSE
+
 User = settings.AUTH_USER_MODEL
 
 
@@ -38,7 +40,6 @@ class Profile(models.Model):
 
 
 class FriendshipResponseType(models.TextChoices):
-    NONE = "NONE", "None"
     ACCEPT = "ACCEPT", "Accept"
     REJECT = "REJECT", "Reject"
 
@@ -57,7 +58,7 @@ class FriendshipRequest(models.Model):
     response = models.CharField(
         max_length=10,
         choices=FriendshipResponseType.choices,
-        default=FriendshipResponseType.NONE
+        default=FRIENDSHIP_DEFAULT_RESPONSE
     )
     sent_at = models.DateTimeField(auto_now_add=True)
 
