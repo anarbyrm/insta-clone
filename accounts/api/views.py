@@ -8,7 +8,7 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from accounts.api.serializers import ProfileSerializer
+from accounts.api.serializers import FriendRequestSerializer, ProfileSerializer
 from accounts.models import FriendshipRequest, FriendshipResponseType, Profile
 from config.permissions import IsOwner
 
@@ -32,6 +32,17 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
 
 
 class FriendRequestView(APIView):
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self, request):
+        all_requests = FriendshipRequest.objects.filter(receiver=request.user, 
+                                                        response=FriendshipResponseType.NONE)
+        serializer = FriendRequestSerializer(all_requests, many=True)
+        data = {
+            "requests": serializer.data
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
     def post(self, request, *args, **kwargs):
         username = request.data.get("username")
         user = get_object_or_404(User, username=username)
@@ -71,3 +82,25 @@ class FriendRequestView(APIView):
         else:
             return Response({"message": "Friendship request has already been sent to '%s'" % username},
                              status=status.HTTP_400_BAD_REQUEST)
+
+
+class FriendRequestResponseView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, pk):
+        friendship_request = get_object_or_404(FriendshipRequest,
+                                               pk=pk,
+                                               response=FriendshipResponseType.NONE)
+        if "response" not in request.data:
+            return Response({"message": "no valid response for friendship request"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = FriendRequestSerializer(friendship_request, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        with transaction.atomic():
+            serializer.save(updated_fields=["response"])
+            request.user.user_profile.friends.add(friendship_request.sender)
+            friendship_request.sender.user_profile.friends.add(request.user)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

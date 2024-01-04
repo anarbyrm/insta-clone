@@ -5,7 +5,7 @@ from rest_framework import serializers
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from djoser.conf import settings as djoser_settings
 
-from accounts.models import Profile
+from accounts.models import FriendshipRequest, Profile
 
 User = get_user_model()
 
@@ -36,4 +36,22 @@ class ProfileSerializer(serializers.ModelSerializer):
             "id",
             "user",
             "total_friends"
+        )
+
+
+class FriendRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FriendshipRequest
+        fields = (
+            "id",
+            "sender",
+            "receiver",
+            "response",
+            "sent_at",
+        )
+        read_only_fields = (
+            "id",
+            "sender",
+            "receiver",
+            "sent_at",
         )
