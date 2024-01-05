@@ -23,6 +23,7 @@ urlpatterns_by_version = [
     path(f"api/{API_VERSION}/", include([
         path("", include("posts.urls")),
         path("", include("accounts.urls")),
+        path("", include("chat.urls")),
     ]))
 ]
 
