@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 
@@ -26,9 +27,10 @@ class MessageViewSet(ModelViewSet):
         if user == self.request.user:
             raise Http404("user cannot send message to himself")
 
+        # get all messages between 2 users
         queryset = Message.objects\
-            .filter(sender=self.request.user,
-                    receiver=user)\
+            .filter(Q(sender=self.request.user, receiver=user) |
+                    Q(sender=user, receiver=self.request.user))\
             .order_by("sent_at")
 
         return queryset
